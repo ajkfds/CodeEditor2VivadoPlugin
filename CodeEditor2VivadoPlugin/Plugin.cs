@@ -31,10 +31,17 @@ namespace pluginVivado
         {
             ContextMenu contextMenu = CodeEditor2.Controller.NavigatePanel.GetContextMenu();
             {
-                MenuItem menuItem_Vivado = CodeEditor2.Global.CreateMenuItem("Vivado", "menuItem_Vivado", "play", Avalonia.Media.Colors.Yellow);
+                MenuItem menuItem_Vivado = CodeEditor2.Global.CreateMenuItem(
+                    "Vivado", "menuItem_Vivado",
+                    "CodeEditor2/Assets/Icons/play.svg",
+                    Avalonia.Media.Colors.Yellow);
                 contextMenu.Items.Add(menuItem_Vivado);
 
-                MenuItem menuItem_RunSimulation = CodeEditor2.Global.CreateMenuItem("Run Simulation", "menuItem_RunSimulation", "play", Avalonia.Media.Colors.Yellow);
+                MenuItem menuItem_RunSimulation = CodeEditor2.Global.CreateMenuItem(
+                    "Run Simulation",
+                    "menuItem_RunSimulation",
+                    "CodeEditor2/Assets/Icons/play.svg",
+                    Avalonia.Media.Colors.Yellow);
                 menuItem_Vivado.Items.Add(menuItem_RunSimulation);
                 menuItem_RunSimulation.Click += MenuItem_RunSimulation_Click;
             }
