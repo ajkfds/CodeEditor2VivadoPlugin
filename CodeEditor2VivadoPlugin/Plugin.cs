@@ -12,6 +12,8 @@ namespace pluginVivado
         public static string StaticID = "Vivado";
         public string Id { get { return StaticID; } }
 
+        public static Avalonia.Media.Color ThemeColor = Avalonia.Media.Colors.YellowGreen;
+
         public bool Register()
         {
             if (!CodeEditor2.Global.Plugins.ContainsKey("Verilog")) return false;
@@ -34,14 +36,14 @@ namespace pluginVivado
                 MenuItem menuItem_Vivado = CodeEditor2.Global.CreateMenuItem(
                     "Vivado", "menuItem_Vivado",
                     "CodeEditor2/Assets/Icons/play.svg",
-                    Avalonia.Media.Colors.Yellow);
+                     Plugin.ThemeColor );
                 contextMenu.Items.Add(menuItem_Vivado);
 
                 MenuItem menuItem_RunSimulation = CodeEditor2.Global.CreateMenuItem(
                     "Run Simulation",
                     "menuItem_RunSimulation",
                     "CodeEditor2/Assets/Icons/play.svg",
-                    Avalonia.Media.Colors.Yellow);
+                    Plugin.ThemeColor);
                 menuItem_Vivado.Items.Add(menuItem_RunSimulation);
                 menuItem_RunSimulation.Click += MenuItem_RunSimulation_Click;
             }

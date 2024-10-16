@@ -19,6 +19,7 @@ namespace pluginVivado.Views
             Content = SimPanel;
         }
 
+        private const string prompt = "xSimShell";
         public static SimulationTab? Create()
         {
             CodeEditor2.Data.File? file;
@@ -30,7 +31,7 @@ namespace pluginVivado.Views
             pluginVerilog.Data.SimulationSetup? simulationSetup = pluginVerilog.Data.SimulationSetup.Create(vfile);
             if (simulationSetup == null) return null;
 
-            SimulationTab tab = new SimulationTab(simulationSetup.TopName, "play", Colors.Red, true);
+            SimulationTab tab = new SimulationTab(simulationSetup.TopName, "play", Plugin.ThemeColor, true);
             tab.SimulationSetup = simulationSetup;
 
             tab.CloseButton_Clicked += new Action(() => { tab.Close(); });
@@ -143,7 +144,7 @@ namespace pluginVivado.Views
 
 
             shell = new CodeEditor2.Shells.WinCmdChell(new List<string> {
-                "prompt xSimVerilogShell$G$_",
+                "prompt "+prompt+"$G$_",
                 "cd "+simulationPath
             });
 
@@ -151,7 +152,7 @@ namespace pluginVivado.Views
             shell.Start();
 
 
-            while (shell.GetLastLine() != "xSimVerilogShell>")
+            while (shell.GetLastLine() != prompt+">")
             {
                 await Task.Delay(10, token);
                 if (token.IsCancellationRequested) return;
@@ -175,7 +176,16 @@ namespace pluginVivado.Views
         }
         private void Shell_LineReceived(string lineString)
         {
-            SimPanel.LineReceived(lineString);
+            if (lineString == prompt + ">")
+            {
+                SimPanel.LineReceived(lineString, Colors.Green);
+            }else if (lineString.StartsWith("ERROR:")){
+                SimPanel.LineReceived(lineString, Colors.Red);
+            }
+            else
+            {
+                SimPanel.LineReceived(lineString, null);
+            }
         }
     }
 }

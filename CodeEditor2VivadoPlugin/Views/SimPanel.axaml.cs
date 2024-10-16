@@ -25,9 +25,9 @@ namespace pluginVivado.Views
 
         private ObservableCollection<ListBoxItem> listItems = new ObservableCollection<ListBoxItem>();
 
-        public void LineReceived(string lineString)
+        public void LineReceived(string lineString, Color? color)
         {
-            appendLog(lineString, null);
+            appendLog(lineString, color);
         }
 
         private void appendLog(string lineString, Color? color)
