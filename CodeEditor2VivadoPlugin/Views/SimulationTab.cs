@@ -4,6 +4,7 @@ using pluginVerilog.Verilog.DataObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,10 +26,10 @@ namespace pluginVivado.Views
             CodeEditor2.Data.File? file;
             file = CodeEditor2.Controller.NavigatePanel.GetSelectedFile();
 
-            pluginVerilog.Data.VerilogFile? vfile = file as pluginVerilog.Data.VerilogFile;
-            if (vfile == null) return null;
+            pluginVerilog.Data.VerilogFile? vFile = file as pluginVerilog.Data.VerilogFile;
+            if (vFile == null) return null;
 
-            pluginVerilog.Data.SimulationSetup? simulationSetup = pluginVerilog.Data.SimulationSetup.Create(vfile);
+            pluginVerilog.Data.SimulationSetup? simulationSetup = pluginVerilog.Data.SimulationSetup.Create(vFile);
             if (simulationSetup == null) return null;
 
             SimulationTab tab = new SimulationTab(simulationSetup.TopName, "play", Plugin.ThemeColor, true);
@@ -41,7 +42,7 @@ namespace pluginVivado.Views
 
         public SimPanel SimPanel;
         protected pluginVerilog.Data.SimulationSetup? SimulationSetup;
-        protected CodeEditor2.Shells.WinCmdChell shell;
+        protected CodeEditor2.Shells.WinCmdShell? shell;
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         private void Close()
@@ -49,6 +50,7 @@ namespace pluginVivado.Views
             tokenSource.Cancel();
             CodeEditor2.Controller.Tabs.RemoveItem(this);
             tokenSource.Dispose();
+            if (shell != null) shell.Dispose();
         }
 
         public void Run()
@@ -80,7 +82,18 @@ namespace pluginVivado.Views
             {
                 foreach (CodeEditor2.Data.File file in SimulationSetup.Files)
                 {
-                    sw.Write("verilog " + simName + " \"" + SimulationSetup.Project.GetAbsolutePath(file.RelativePath) + "\"");
+                    pluginVerilog.Data.VerilogFile? vFile = file as pluginVerilog.Data.VerilogFile;
+                    if (vFile == null) continue;
+
+                    if (vFile.SystemVerilog)
+                    {
+                        sw.Write("sv " + "work" + " \"" + SimulationSetup.Project.GetAbsolutePath(file.RelativePath) + "\"");
+                    }
+                    else
+                    {
+                        sw.Write("verilog " + "work" + " \"" + SimulationSetup.Project.GetAbsolutePath(file.RelativePath) + "\"");
+                    }
+
                     if (SimulationSetup.IncludePaths.Count != 0)
                     {
                         foreach (string includePath in SimulationSetup.IncludePaths)
@@ -143,7 +156,7 @@ namespace pluginVivado.Views
             }
 
 
-            shell = new CodeEditor2.Shells.WinCmdChell(new List<string> {
+            shell = new CodeEditor2.Shells.WinCmdShell(new List<string> {
                 "prompt "+prompt+"$G$_",
                 "cd "+simulationPath
             });
