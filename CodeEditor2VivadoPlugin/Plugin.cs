@@ -24,7 +24,7 @@ namespace pluginVivado
             return true;
         }
 
-        private void projectCreated(CodeEditor2.Data.Project project)
+        private void projectCreated(CodeEditor2.Data.Project project, CodeEditor2.Data.Project.Setup? setup)
         {
             //            project.ProjectProperties.Add(Id, new ProjectProperty(project));
         }
