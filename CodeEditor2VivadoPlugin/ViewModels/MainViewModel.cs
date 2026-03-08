@@ -1,4 +1,4 @@
-﻿namespace CodeEditor2VivadoPlugin.ViewModels;
+namespace CodeEditor2VivadoPlugin.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
