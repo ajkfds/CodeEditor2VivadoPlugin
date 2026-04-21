@@ -1,16 +1,9 @@
-using AjkAvaloniaLibs.Controls;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Styling;
 using Avalonia.Threading;
-using CodeEditor2.NavigatePanel;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace pluginVivado.Views
 {

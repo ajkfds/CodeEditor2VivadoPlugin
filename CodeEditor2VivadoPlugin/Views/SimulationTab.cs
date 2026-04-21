@@ -1,14 +1,8 @@
 using Avalonia.Media;
-using pluginVerilog.Verilog.BuildingBlocks;
-using pluginVerilog.Verilog.DataObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static CodeEditor2.Controller;
 
 namespace pluginVivado.Views
 {
@@ -165,7 +159,7 @@ namespace pluginVivado.Views
             shell.Start();
 
 
-            while (shell.GetLastLine() != prompt+">")
+            while (shell.GetLastLine() != prompt + ">")
             {
                 await Task.Delay(10, token);
                 if (token.IsCancellationRequested) return;
@@ -192,7 +186,9 @@ namespace pluginVivado.Views
             if (lineString == prompt + ">")
             {
                 SimPanel.LineReceived(lineString, Colors.Green);
-            }else if (lineString.StartsWith("ERROR:")){
+            }
+            else if (lineString.StartsWith("ERROR:"))
+            {
                 SimPanel.LineReceived(lineString, Colors.Red);
             }
             else
