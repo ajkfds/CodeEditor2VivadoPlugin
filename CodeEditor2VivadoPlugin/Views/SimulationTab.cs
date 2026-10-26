@@ -74,23 +74,33 @@ namespace pluginVivado.Views
             // sv<work_library> <file_name>
             using (System.IO.StreamWriter sw = new System.IO.StreamWriter(simulationPath + "\\" + simName + ".prj"))
             {
-                foreach (CodeEditor2.Data.File file in SimulationSetup.Files)
+                // GetAllFiles / GetAllIncludePaths include the externally
+                // referenced projects (parameterized "@project" instances), and
+                // GetAbsolutePath resolves the file path in the project that
+                // actually owns the file. Enumerating only this project's Files
+                // with the top-level Project.GetAbsolutePath silently dropped
+                // external project sources from the compile list.
+                List<string> includePaths = SimulationSetup.GetAllIncludePaths();
+                foreach (pluginVerilog.Data.IVerilogRelatedFile file in SimulationSetup.GetAllFiles())
                 {
                     pluginVerilog.Data.VerilogFile? vFile = file as pluginVerilog.Data.VerilogFile;
                     if (vFile == null) continue;
 
+                    string? absolutePath = pluginVerilog.Data.SimulationSetup.GetAbsolutePath(file);
+                    if (absolutePath == null) continue;
+
                     if (vFile.SystemVerilog)
                     {
-                        sw.Write("sv " + "work" + " \"" + SimulationSetup.Project.GetAbsolutePath(file.RelativePath) + "\"");
+                        sw.Write("sv " + "work" + " \"" + absolutePath + "\"");
                     }
                     else
                     {
-                        sw.Write("verilog " + "work" + " \"" + SimulationSetup.Project.GetAbsolutePath(file.RelativePath) + "\"");
+                        sw.Write("verilog " + "work" + " \"" + absolutePath + "\"");
                     }
 
-                    if (SimulationSetup.IncludePaths.Count != 0)
+                    if (includePaths.Count != 0)
                     {
-                        foreach (string includePath in SimulationSetup.IncludePaths)
+                        foreach (string includePath in includePaths)
                         {
                             sw.Write(" -i \"" + includePath + "\""); // path with space is not accepted
                         }
