@@ -24,29 +24,58 @@ namespace pluginVivado
             //            project.ProjectProperties.Add(Id, new ProjectProperty(project));
         }
 
+        /// <summary>
+        /// Id of the "Vivado" grouping row in the shared node menu.
+        /// </summary>
+        public const string MenuGroupId = "vivado";
+
+        /// <summary>Id of the "Run Simulation" row inside that group.</summary>
+        public const string MenuRunSimulationId = "vivadoRunSimulation";
+
         public bool Initialize()
         {
-            pluginVerilog.NavigatePanel.VerilogFileNode.CustomizeNavigateNodeContextMenu += CustomizeNavigateNodeContextMenuHandler;
+            // A catalog entry instead of a ContextMenu subscription, so the
+            // editor and VS Code share one declaration and the row can state the
+            // condition under which it is meaningful (see Available).
+            pluginVerilog.CoreBridge.HierarchyMenuCatalog.Register(new pluginVerilog.CoreBridge.HierarchyMenuCatalog.Entry
+            {
+                Id = MenuGroupId,
+                Label = "Vivado",
+                Detail = "Xilinx Vivado simulation",
+                Targets = pluginVerilog.CoreBridge.HierarchyMenuCatalog.AppliesTo.File,
+                // The simulation tab exists only in the editor.
+                Hosts = pluginVerilog.CoreBridge.HierarchyMenuCatalog.Hosts.Desktop,
+                Group = 30,
+                IconPath = "CodeEditor2/Assets/Icons/play.svg",
+                IconColor = PackColor(ThemeColor),
+                Children =
+                {
+                    new pluginVerilog.CoreBridge.HierarchyMenuCatalog.Entry
+                    {
+                        Id = MenuRunSimulationId,
+                        Label = "Run Simulation",
+                        Detail = "open the Vivado simulation tab",
+                        Targets = pluginVerilog.CoreBridge.HierarchyMenuCatalog.AppliesTo.File,
+                        Hosts = pluginVerilog.CoreBridge.HierarchyMenuCatalog.Hosts.Desktop,
+                        Group = 10,
+                        IconPath = "CodeEditor2/Assets/Icons/play.svg",
+                        IconColor = PackColor(ThemeColor),
+                        Action = pluginVerilog.CoreBridge.HierarchyMenuCatalog.ActionKind.DesktopHandler,
+                        Available = () => CodeEditor2.Global.Plugins.ContainsKey(StaticID),
+                        Handler = RunSimulation,
+                    },
+                },
+            });
             return true;
         }
 
-        public static void CustomizeNavigateNodeContextMenuHandler(Avalonia.Controls.ContextMenu contextMenu)
+        /// <summary>Packs an Avalonia colour into the catalog's 0xAARRGGBB form.</summary>
+        private static uint PackColor(Avalonia.Media.Color color)
         {
-            MenuItem menuItem_Vivado = CodeEditor2.Global.CreateMenuItem(
-                "Vivado", "menuItem_Vivado",
-                "CodeEditor2/Assets/Icons/play.svg",
-                 Plugin.ThemeColor);
-            contextMenu.Items.Add(menuItem_Vivado);
-            MenuItem menuItem_RunSimulation = CodeEditor2.Global.CreateMenuItem(
-                "Run Simulation",
-                "menuItem_RunSimulation",
-                "CodeEditor2/Assets/Icons/play.svg",
-                Plugin.ThemeColor);
-            menuItem_Vivado.Items.Add(menuItem_RunSimulation);
-            menuItem_RunSimulation.Click += MenuItem_RunSimulation_Click;
+            return ((uint)color.A << 24) | ((uint)color.R << 16) | ((uint)color.G << 8) | color.B;
         }
 
-        private static void MenuItem_RunSimulation_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private static void RunSimulation(pluginVerilog.CoreBridge.NavigateNodeMenuContext context)
         {
             Views.SimulationTab? tab = Views.SimulationTab.Create();
             if (tab == null) return;
