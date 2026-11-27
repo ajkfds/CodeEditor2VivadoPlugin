@@ -37,30 +37,30 @@ namespace pluginVivado
             // A catalog entry instead of a ContextMenu subscription, so the
             // editor and VS Code share one declaration and the row can state the
             // condition under which it is meaningful (see Available).
-            pluginVerilog.CoreBridge.HierarchyMenuCatalog.Register(new pluginVerilog.CoreBridge.HierarchyMenuCatalog.Entry
+            SystemVerilogCore.Menus.HierarchyMenuCatalog.Register(new SystemVerilogCore.Menus.HierarchyMenuCatalog.Entry
             {
                 Id = MenuGroupId,
                 Label = "Vivado",
                 Detail = "Xilinx Vivado simulation",
-                Targets = pluginVerilog.CoreBridge.HierarchyMenuCatalog.AppliesTo.File,
+                Targets = SystemVerilogCore.Menus.HierarchyMenuCatalog.AppliesTo.File,
                 // The simulation tab exists only in the editor.
-                Hosts = pluginVerilog.CoreBridge.HierarchyMenuCatalog.Hosts.Desktop,
+                Hosts = SystemVerilogCore.Menus.HierarchyMenuCatalog.Hosts.Desktop,
                 Group = 30,
                 IconPath = "CodeEditor2/Assets/Icons/play.svg",
                 IconColor = PackColor(ThemeColor),
                 Children =
                 {
-                    new pluginVerilog.CoreBridge.HierarchyMenuCatalog.Entry
+                    new SystemVerilogCore.Menus.HierarchyMenuCatalog.Entry
                     {
                         Id = MenuRunSimulationId,
                         Label = "Run Simulation",
                         Detail = "open the Vivado simulation tab",
-                        Targets = pluginVerilog.CoreBridge.HierarchyMenuCatalog.AppliesTo.File,
-                        Hosts = pluginVerilog.CoreBridge.HierarchyMenuCatalog.Hosts.Desktop,
+                        Targets = SystemVerilogCore.Menus.HierarchyMenuCatalog.AppliesTo.File,
+                        Hosts = SystemVerilogCore.Menus.HierarchyMenuCatalog.Hosts.Desktop,
                         Group = 10,
                         IconPath = "CodeEditor2/Assets/Icons/play.svg",
                         IconColor = PackColor(ThemeColor),
-                        Action = pluginVerilog.CoreBridge.HierarchyMenuCatalog.ActionKind.DesktopHandler,
+                        Action = SystemVerilogCore.Menus.HierarchyMenuCatalog.ActionKind.DesktopHandler,
                         Available = () => CodeEditor2.Global.Plugins.ContainsKey(StaticID),
                         Handler = RunSimulation,
                     },
@@ -75,7 +75,7 @@ namespace pluginVivado
             return ((uint)color.A << 24) | ((uint)color.R << 16) | ((uint)color.G << 8) | color.B;
         }
 
-        private static void RunSimulation(pluginVerilog.CoreBridge.NavigateNodeMenuContext context)
+        private static void RunSimulation(SystemVerilogCore.Menus.NavigateNodeMenuContext context)
         {
             Views.SimulationTab? tab = Views.SimulationTab.Create();
             if (tab == null) return;
